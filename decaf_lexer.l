@@ -76,6 +76,7 @@ CHAR ([\40-\176]{-}['"\\])|\\n|\\t|\\\\|\\\"|\\\'
 \'{CHAR}\'                  { flex_outfile  << "CHARACTER:" << yytext << std::endl; yylval.sval = strdup(yytext);				return CHAR_LITERAL; }
 
 \/\/.*                      /* Ignore one line commments */
+[/][*][^*]*[*]+([^*/][^*]*[*]+)*[/]	;	/* Ignore multi line comments */
 [ \t\n]*										{}
 
 .       									{ flex_outfile  << "Error by lexer" << std::endl; }
