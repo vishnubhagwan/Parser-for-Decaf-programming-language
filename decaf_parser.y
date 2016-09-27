@@ -18,59 +18,22 @@ void yyerror(const char *s);
 }
 
 
-%token 	<sval> BREAK
-%token 	<sval> CALLOUT
-%token 	<sval> CLASS
-%token 	<sval> CONTINUE
-%token 	<sval> ELSE
-%token 	<sval> FALSE
-%token 	<sval> FOR
-%token 	<sval> IF
-%token 	<sval> RETURN
-%token 	<sval> TRUE
-%token 	<sval> VOID
-%token 	<sval> COMMA
-
-%token 	<sval> TYPE_BOOLEAN
-%token 	<sval> TYPE_INTEGER
-
-%token 	<sval> O_CUR_BRACE
-%token 	<sval> C_CUR_BRACE
-%token 	<sval> O_PAREN
-%token 	<sval> C_PAREN
-%token 	<sval> SEMICOLON
-%token 	<sval> O_BRACE
-%token 	<sval> C_BRACE
-
-%left 	<sval> OP_LOGICAL_OR OP_LOGICAL_AND
-
-%token 	<sval> EQUAL PLUS_EQUAL MINUS_EQUAL
-%left 	<sval> OP_NOT_EQUAL OP_EQUAL_EQUAL
-
+%token 	<sval> BREAK CALLOUT CLASS CONTINUE ELSE FALSE FOR IF RETURN TRUE VOID COMMA TYPE_BOOLEAN TYPE_INTEGER O_CUR_BRACE C_CUR_BRACE O_PAREN C_PAREN SEMICOLON O_BRACE C_BRACE EQUAL PLUS_EQUAL MINUS_EQUAL IDENTIFIER INT_LITERAL STRING_LITERAL CHAR_LITERAL
+%left<sval> OP_LOGICAL_OR OP_LOGICAL_AND OP_NOT_EQUAL OP_EQUAL_EQUAL OP_PLUS OP_MINUS OP_MULTIPLY OP_DIVIDE OP_MODULO
 %nonassoc <sval> OP_LESS_THAN OP_GREATER_THAN OP_LESS_EQUAL OP_GREATER_EQUAL
-
-%left 	<sval> OP_PLUS OP_MINUS
-
-%left 	<sval> OP_MULTIPLY OP_DIVIDE OP_MODULO
-
 %precedence OP_NOT OP_UMINUS
 %define parse.error verbose
-
-%token 	<sval> IDENTIFIER
-%token 	<sval> INT_LITERAL
-%token 	<sval> STRING_LITERAL
-%token 	<sval> CHAR_LITERAL
 
 %%
 
 program:
 	CLASS IDENTIFIER O_CUR_BRACE field_decls method_decls C_CUR_BRACE		{ bison_outfile << "PROGRAM ENCOUNTERED" << std::endl; }
 	|
-	CLASS IDENTIFIER O_CUR_BRACE field_decls C_CUR_BRACE								{ bison_outfile << "PROGRAM ENCOUNTERED" << std::endl; }
+	CLASS IDENTIFIER O_CUR_BRACE field_decls C_CUR_BRACE					{ bison_outfile << "PROGRAM ENCOUNTERED" << std::endl; }
 	|
-	CLASS IDENTIFIER O_CUR_BRACE method_decls C_CUR_BRACE								{ bison_outfile << "PROGRAM ENCOUNTERED" << std::endl; }
+	CLASS IDENTIFIER O_CUR_BRACE method_decls C_CUR_BRACE					{ bison_outfile << "PROGRAM ENCOUNTERED" << std::endl; }
 	|
-	CLASS IDENTIFIER O_CUR_BRACE C_CUR_BRACE														{ bison_outfile << "PROGRAM ENCOUNTERED" << std::endl; }
+	CLASS IDENTIFIER O_CUR_BRACE C_CUR_BRACE								{ bison_outfile << "PROGRAM ENCOUNTERED" << std::endl; }
 	;
 
 field_decls:
@@ -86,21 +49,21 @@ method_decls:
 	;
 
 field_decl:
-	type id_all_list SEMICOLON																					{ bison_outfile << "DECLARATION ENCOUNTERED" << std::endl; }
+	type id_all_list SEMICOLON												{ bison_outfile << "DECLARATION ENCOUNTERED" << std::endl; }
 	;
 
 id_all_list:
-	id_all_list COMMA IDENTIFIER																				{ bison_outfile << "ID=" << $3 << std::endl; }
+	id_all_list COMMA IDENTIFIER											{ bison_outfile << "ID=" << $3 << std::endl; }
 	|
 	id_all_list COMMA id_array
 	|
-	IDENTIFIER																													{ bison_outfile << "ID=" << $1 << std::endl; }
+	IDENTIFIER																{ bison_outfile << "ID=" << $1 << std::endl; }
 	|
 	id_array
 	;
 
 id_array:
-	IDENTIFIER O_BRACE INT_LITERAL C_BRACE															{ bison_outfile << "ID=" << $1 << std::endl << "SIZE=" << $3 << std::endl; }
+	IDENTIFIER O_BRACE INT_LITERAL C_BRACE									{ bison_outfile << "ID=" << $1 << std::endl << "SIZE=" << $3 << std::endl; }
 	;
 
 method_decl:
@@ -150,7 +113,7 @@ statements:
 statement:
 	block
 	|
-	location assign_op expr SEMICOLON																		{ bison_outfile << "ASSIGNMENT OPERATION ENCOUNTERED" << std::endl; }
+	location assign_op expr SEMICOLON										{ bison_outfile << "ASSIGNMENT OPERATION ENCOUNTERED" << std::endl; }
 	|
 	method_call SEMICOLON
 	|
@@ -178,9 +141,9 @@ assign_op:
 	;
 
 location:
-	IDENTIFIER																												{ bison_outfile << "LOCATION ENCOUNTERED=" << $1 << std::endl; }
+	IDENTIFIER																{ bison_outfile << "LOCATION ENCOUNTERED=" << $1 << std::endl; }
 	|
-	IDENTIFIER O_BRACE expr C_BRACE																		{ bison_outfile << "LOCATION ENCOUNTERED=" << $1 << std::endl; }
+	IDENTIFIER O_BRACE expr C_BRACE											{ bison_outfile << "LOCATION ENCOUNTERED=" << $1 << std::endl; }
 	;
 
 method_call:
@@ -188,9 +151,9 @@ method_call:
 	|
 	IDENTIFIER O_PAREN C_PAREN
 	|
-	CALLOUT O_PAREN STRING_LITERAL C_PAREN														{ bison_outfile << "CALLOUT TO " << $3 << " ENCOUNTERED" << std::endl; }
+	CALLOUT O_PAREN STRING_LITERAL C_PAREN									{ bison_outfile << "CALLOUT TO " << $3 << " ENCOUNTERED" << std::endl; }
 	|
-	CALLOUT O_PAREN STRING_LITERAL COMMA callout_args C_PAREN					{ bison_outfile << "CALLOUT TO " << $3 << " ENCOUNTERED" << std::endl; }
+	CALLOUT O_PAREN STRING_LITERAL COMMA callout_args C_PAREN				{ bison_outfile << "CALLOUT TO " << $3 << " ENCOUNTERED" << std::endl; }
 
 callout_args:
 	callout_args COMMA callout_arg
@@ -217,19 +180,19 @@ expr:
 	|
 	O_PAREN expr C_PAREN
 	|
-	expr OP_PLUS expr																									{ bison_outfile << "ADDITION ENCOUNTERED" << std::endl; }
+	expr OP_PLUS expr														{ bison_outfile << "ADDITION ENCOUNTERED" << std::endl; }
 	|
-	expr OP_MINUS expr																								{ bison_outfile << "SUBTRACTION ENCOUNTERED" << std::endl; }
+	expr OP_MINUS expr														{ bison_outfile << "SUBTRACTION ENCOUNTERED" << std::endl; }
 	|
-	expr OP_MULTIPLY expr																							{ bison_outfile << "MULTIPLICATION ENCOUNTERED" << std::endl; }
+	expr OP_MULTIPLY expr													{ bison_outfile << "MULTIPLICATION ENCOUNTERED" << std::endl; }
 	|
-	expr OP_DIVIDE expr																								{ bison_outfile << "DIVISION ENCOUNTERED" << std::endl; }
+	expr OP_DIVIDE expr														{ bison_outfile << "DIVISION ENCOUNTERED" << std::endl; }
 	|
-	expr OP_MODULO expr																								{ bison_outfile << "MOD ENCOUNTERED" << std::endl; }
+	expr OP_MODULO expr														{ bison_outfile << "MOD ENCOUNTERED" << std::endl; }
 	|
-	expr OP_LESS_THAN expr																						{ bison_outfile << "LESS THAN ENCOUNTERED" << std::endl; }
+	expr OP_LESS_THAN expr													{ bison_outfile << "LESS THAN ENCOUNTERED" << std::endl; }
 	|
-	expr OP_GREATER_THAN expr																					{ bison_outfile << "GREATER THAN ENCOUNTERED" << std::endl; }
+	expr OP_GREATER_THAN expr												{ bison_outfile << "GREATER THAN ENCOUNTERED" << std::endl; }
 	|
 	expr OP_LESS_EQUAL expr
 	|
@@ -249,13 +212,13 @@ expr:
 	;
 
 literal:
-	INT_LITERAL																												{ bison_outfile << "INT ENCOUNTERED=" << $1 << std::endl; }
+	INT_LITERAL																{ bison_outfile << "INT ENCOUNTERED=" << $1 << std::endl; }
 	|
-	CHAR_LITERAL																											{ bison_outfile << "CHAR ENCOUNTERED=" << $1 << std::endl; }
+	CHAR_LITERAL															{ bison_outfile << "CHAR ENCOUNTERED=" << $1 << std::endl; }
 	|
-	TRUE																															{ bison_outfile << "BOOLEAN ENCOUNTERED=true" << std::endl; }
+	TRUE																	{ bison_outfile << "BOOLEAN ENCOUNTERED=true" << std::endl; }
 	|
-	FALSE																															{ bison_outfile << "BOOLEAN ENCOUNTERED=false" << std::endl; }
+	FALSE																	{ bison_outfile << "BOOLEAN ENCOUNTERED=false" << std::endl; }
 	;
 
 type:
